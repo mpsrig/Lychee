@@ -18,6 +18,6 @@ require(__DIR__ . '/helpers/search.php');
 
 
 $import = new Import();
-$import->server(NULL);
+echo $import->server(NULL);
 
 ?>
