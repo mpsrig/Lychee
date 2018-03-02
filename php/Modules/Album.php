@@ -299,6 +299,7 @@ final class Album {
 
 			// Add photo to zip
 			$zip->addFile($photo->url, $zipFileName);
+			$zip->setCompressionName($zipFileName, ZipArchive::CM_STORE);
 
 		}
 
