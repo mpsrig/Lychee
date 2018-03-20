@@ -314,10 +314,6 @@ final class Album {
                 unlink($filename);
             }
 
-            // Write metadata
-            $serialized_meta = serialize(array($names, $urls));
-            file_put_contents($meta_filename, $serialized_meta);
-
             // Create zip
             $zip = new ZipArchive();
             if ($zip->open($filename, ZIPARCHIVE::CREATE) !== TRUE) {
@@ -333,6 +329,10 @@ final class Album {
             }
             // Finish zip
             $zip->close();
+
+            // Write metadata - do this after completion of zip file
+            $serialized_meta = serialize(array($names, $urls));
+            file_put_contents($meta_filename, $serialized_meta);
         }
 
 		// Send zip
