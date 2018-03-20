@@ -243,15 +243,6 @@ final class Album {
 		// Escape title
 		$zipTitle = str_replace($badChars, '', $zipTitle);
 
-		$filename = LYCHEE_DATA . $zipTitle . '.zip';
-
-		// Create zip
-		$zip = new ZipArchive();
-		if ($zip->open($filename, ZIPARCHIVE::CREATE)!==TRUE) {
-			Log::error(Database::get(), __METHOD__, __LINE__, 'Could not create ZipArchive');
-			return false;
-		}
-
 		// Execute query
 		$photos = Database::execute(Database::get(), $photos, __METHOD__, __LINE__);
 
@@ -262,8 +253,9 @@ final class Album {
 		}
 
 		// Parse each path
-		$files = array();
-		while ($photo = $photos->fetch_object()) {
+        $urls = array();
+        $names = array();
+        while ($photo = $photos->fetch_object()) {
 
 			// Parse url
 			$photo->url = LYCHEE_UPLOADS_BIG . $photo->url;
@@ -295,25 +287,59 @@ final class Album {
 			}
 
 			// Add to array
-			$files[] = $zipFileName;
-
-			// Add photo to zip
-			$zip->addFile($photo->url, $zipFileName);
-			$zip->setCompressionName($zipFileName, ZipArchive::CM_STORE);
+			$names[] = $zipFileName;
+			$urls[] = $photo->url;
 
 		}
 
-		// Finish zip
-		$zip->close();
+        $filename = LYCHEE_DATA . $zipTitle . '.zip';
+        $meta_filename = $filename . '.lycheeMeta';
+
+        $use_previous_zip = false;
+        if (file_exists($meta_filename) && file_exists($filename)) {
+            $serialized_meta = file_get_contents($meta_filename);
+            $meta = unserialize($serialized_meta);
+            $meta_names = $meta[0];
+            $meta_urls = $meta[1];
+            if ($names === $meta_names && $urls === $meta_urls) {
+                $use_previous_zip = true;
+            }
+        }
+
+        if (!$use_previous_zip) {
+            if (file_exists($meta_filename)) {
+                unlink($meta_filename);
+            }
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+
+            // Write metadata
+            $serialized_meta = serialize(array($names, $urls));
+            file_put_contents($meta_filename, $serialized_meta);
+
+            // Create zip
+            $zip = new ZipArchive();
+            if ($zip->open($filename, ZIPARCHIVE::CREATE) !== TRUE) {
+                Log::error(Database::get(), __METHOD__, __LINE__, 'Could not create ZipArchive');
+                return false;
+            }
+
+            foreach ($names as $i => $name) {
+                $url = $urls[$i];
+                // Add photo to zip
+                $zip->addFile($url, $name);
+                $zip->setCompressionName($name, ZipArchive::CM_STORE);
+            }
+            // Finish zip
+            $zip->close();
+        }
 
 		// Send zip
 		header("Content-Type: application/zip");
 		header("Content-Disposition: attachment; filename=\"$zipTitle.zip\"");
 		header("Content-Length: " . filesize($filename));
 		readfile($filename);
-
-		// Delete zip
-		unlink($filename);
 
 		// Call plugins
 		Plugins::get()->activate(__METHOD__, 1, func_get_args());
