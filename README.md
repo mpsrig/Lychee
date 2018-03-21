@@ -5,7 +5,13 @@
 ![Lychee](http://l.electerious.com/uploads/big/c4b58cb87d95aeaed78fdca581cc908c.jpg)
 ![Lychee](http://l.electerious.com/uploads/big/075ac5de5b5d6c593acbb700f0e1d739.jpg)
 
-Lychee is a free photo-management tool, which runs on your server or web-space. Installing is a matter of seconds. Upload, manage and share photos like from a native application. Lychee comes with everything you need and all your photos are stored securely. Try the [Live Demo](http://ld.electerious.com) or read more on our [Website](http://lychee.electerious.com).
+Lychee is a free photo-management tool, which runs on your server or web-space. Installing is a matter of seconds. Upload, manage and share photos like from a native application. Lychee comes with everything you need and all your photos are stored securely. 
+
+This is a fork of the original project, with a few improvements for my needs.
+So far, I've added a CLI importer: [php/cli_import.php](php/cli_import.php)
+Additionally, ZIP archives are cached, and only regenerated if the album changes (creating ZIP archives is expensive and slow, and unnecessary if multiple users are downloading the same unchanged album).
+
+For the original, see their [Website](http://lychee.electerious.com).
 
 ## Installation
 
@@ -71,6 +77,3 @@ Here's a list of all available Plugins and Extensions:
 
 Take a look at the [FAQ](docs/FAQ.md) if you have problems. Discovered a bug? Please create an issue here on GitHub!
 
-## Donate
-
-I am working hard on continuously developing and maintaining Lychee. Please consider making a donation via PayPal (from [our site](http://lychee.electerious.com/)) to keep the project going strong and me motivated.
