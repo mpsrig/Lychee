@@ -8,7 +8,9 @@
 Lychee is a free photo-management tool, which runs on your server or web-space. Installing is a matter of seconds. Upload, manage and share photos like from a native application. Lychee comes with everything you need and all your photos are stored securely. 
 
 This is a fork of the original project, with a few improvements for my needs.
-So far, I've added a CLI importer: [php/cli_import.php](php/cli_import.php)
+
+So far, I've added a [CLI importer](php/cli_import.php), which allows you to import all photos in the `uploads/import` directory from the CLI.  You can use this to bypass web server execution time limits, use cron, or just run imports more reliably on a remote server by using tmux or screen.
+
 Additionally, ZIP archives are cached, and only regenerated if the album changes (creating ZIP archives is expensive and slow, and unnecessary if multiple users are downloading the same unchanged album).
 
 For the original, see their [Website](http://lychee.electerious.com).
